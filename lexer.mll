@@ -8,7 +8,7 @@ let white = [' ' '\t']+
 let digit = ['0'-'9']
 let int = '-'? digit+
 let letter = ['a'-'z' 'A'-'Z']
-let id = letter+
+let id = (letter | '_' | digit)+
 let bool = "True" | "False"
 let newline = '\r' | '\n' | "\r\n"
 
@@ -47,8 +47,8 @@ rule read =
   | "<-" { L_ARROW }
   (* values *)
   | bool { BOOL (Lexing.lexeme lexbuf |> String.lowercase |> Bool.of_string) }
-  | id { ID (Lexing.lexeme lexbuf) }
   | int { INT (Lexing.lexeme lexbuf |> Int.of_string) }
+  | id { ID (Lexing.lexeme lexbuf) }
   (* else *)
   | _ { raise (Error (Lexing.lexeme_start lexbuf |> Printf.sprintf "At offset %d: unexpected character.\n")) }
 
