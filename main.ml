@@ -29,3 +29,11 @@ let parse s =
   let lexbuf = Lexing.from_string s in
   let ast = Parser.prog Lexer.read lexbuf in
   ast
+
+let rec read lexbuf res =
+  let token = Lexer.read lexbuf in
+  if token <> Parser.EOF then read lexbuf (token :: res) else res
+
+let debug s =
+  let lexbuf = Lexing.from_string s in
+  read lexbuf [] |> List.rev

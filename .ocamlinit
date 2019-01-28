@@ -1,1 +1,6 @@
-#use "top.ml";;
+#directory "_build/default/.main.eobjs";;
+#require "core";;
+#load "lexer.cmo";;
+#load "parser.cmo";;
+#load "main.cmo";;
+open Main

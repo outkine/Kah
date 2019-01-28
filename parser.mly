@@ -16,43 +16,47 @@ open Ast
 %left PLUS MINUS
 %left TIMES
 %left PLUS_EQ MINUS_EQ TIMES_EQ EQ
-%nonassoc NOT
 %left AND OR
+%nonassoc NOT
 
 %start <Ast.expr list> prog
 %%
 
 let prog :=
-	es = separated_list(NEWLINE, expr); EOF; <>
+    NEWLINE?; es = separated_list(NEWLINE, expr); EOF; <>
 
 let top :=
     | ~ = expr; <>
 (*	| FUN; name = ID; ~ = body <FunDef>*)
 
 let expr :=
-	| ~ = INT; <Int>
-	| ~ = BOOL; <Bool>
-	| ~ = ID; <Var>
-	| L_PAREN; ~ = expr; R_PAREN; <>
+    | ~ = INT; <Int>
+    | ~ = BOOL; <Bool>
+    | ~ = ID; <Var>
+    | L_PAREN; e = expr; R_PAREN; <>
+    | es = array+; <Array>
+
+    | e1 = expr; PLUS; e2 = expr; <Plus>
+    | e1 = expr; MINUS; e2 = expr; <Minus>
+    | e1 = expr; TIMES; e2 = expr; <Times>
+    | e1 = expr; AND; e2 = expr; <And>
+    | e1 = expr; OR; e2 = expr; <Or>
+    | e1 = expr; EQUALS; e2 = expr; <Equals>
+    | e1 = expr; NOT_EQUALS; e2 = expr; <NotEquals>
+    | NOT; e = expr; <Not>
+
+    | name = ID; EQ; e = expr; <Eq>
+    | name = ID; PLUS_EQ; e = expr; <PlusEq>
+    | name = ID; MINUS_EQ; e = expr; <MinusEq>
+    | name = ID; TIMES_EQ; e = expr; <TimesEq>
+
+let array :=
+    | L_BRACE; e = expr; R_BRACE; <>
 
 (*
-	| e1 = expr; PLUS; e2 = expr <Plus>
-	| e1 = expr; MINUS; e2 = expr { Minus(e1, e2) }
-	| e1 = expr; TIMES; e2 = expr { Times(e1, e2) }
-	| e1 = expr; AND; e2 = expr { And(e1, e2) }
-	| e1 = expr; OR; e2 = expr { Or(e1, e2) }
-	| e1 = expr; EQUALS; e2 = expr { Equals(e1, e2) }
-	| e1 = expr; NOT_EQUALS; e2 = expr { NotEquals(e1, e2) }
-	| NOT; e = expr { Not(e1, e2) }
+    | TILDE; name = ID { FunCall(name) }
 
-	| name = ID; EQ; e = expr { Eq(name, e) }
-	| name = ID; PLUS_EQ; e = expr { PlusEq(name, e) }
-	| name = ID; MINUS_EQ; e = expr { MinusEq(name, e) }
-	| name = ID; TIMES_EQ; e = expr { TimesEq(name, e) }
-
-	| TILDE; name = ID { FunCall(name) }
-
-	| MATCH; e = expr; b = match_body { Match(e, b) }
+    | MATCH; e = expr; b = match_body { Match(e, b) }
 	;
 
 match_body:
@@ -68,5 +72,5 @@ expressions:
 	| (* empty *) { [] }
 	| e = expr { [e] }
 	| e = expr; NEWLINE; es = expressions { e :: es }
-	;
-*)
+
+	*)
