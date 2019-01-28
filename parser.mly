@@ -31,20 +31,23 @@ let top :=
 let expr :=
     | ~ = INT; <Int>
     | ~ = BOOL; <Bool>
-    | ~ = ID; <Var>
     | L_PAREN; e = expr; R_PAREN; <>
     | es = array+; <Array>
-    | name = ID; es = array+; <ArrayAccess>
 
     | e1 = expr; op = op; e2 = expr; {Op(op, e1, e2)}
     | op = unary_op; e = expr; <UnaryOp>
 
-    | name = ID; EQ; e = expr; <Eq>
-    | name = ID; op = eq_op; e = expr; {OpEq(op, name, e)}
+    | ~ = var; <Var>
+    | var = var; EQ; e = expr; <Eq>
+    | var = var; op = eq_op; e = expr; {OpEq(op, var, e)}
 
     | TILDE; name = ID; <FunCall>
     | MATCH; e = expr; b = match_body; <Match>
     | IF; e = expr; b = body; <If>
+
+let var :=
+    | name = ID; <RegVar>
+    | name = ID; es = array+; <ArrayVar>
 
 let eq_op ==
     | PLUS_EQ; {Plus}

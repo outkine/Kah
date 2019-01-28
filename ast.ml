@@ -1,20 +1,21 @@
 type unary_operator = Not
 type operator = Plus | Minus | Times | And | Or | Equal | NotEqual
 
-type var = string
+type id = string
 
 and body = expr list
 
+and array_info = expr list
+
 and expr =
   (* structures *)
-  | FunDef of var * body
-  | FunCall of var
+  | FunDef of id * body
+  | FunCall of id
   | Match of expr * (expr * body) list
   | If of expr * body
   (* values *)
   | Var of var
-  | Array of expr list
-  | ArrayAccess of var * expr list
+  | Array of array_info
   | Int of int
   | Bool of bool
   (* operators *)
@@ -22,3 +23,5 @@ and expr =
   | Op of operator * expr * expr
   | Eq of var * expr
   | OpEq of operator * var * expr
+
+and var = RegVar of id | ArrayVar of id * array_info
