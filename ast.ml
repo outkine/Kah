@@ -1,19 +1,24 @@
-type expr =
+type unary_operator = Not
+type operator = Plus | Minus | Times | And | Or | Equal | NotEqual
+
+type var = string
+
+and body = expr list
+
+and expr =
+  (* structures *)
+  | FunDef of var * body
+  | FunCall of var
+  | Match of expr * (expr * body) list
+  | If of expr * body
   (* values *)
-  | Var of string
+  | Var of var
   | Array of expr list
+  | ArrayAccess of var * expr list
   | Int of int
   | Bool of bool
-  (* binary operators *)
-  | Plus of expr * expr
-  | Minus of expr * expr
-  | Times of expr * expr
-  | And of expr * expr
-  | Or of expr * expr
-  | Not of expr
-  | Equals of expr * expr
-  | NotEquals of expr * expr
-  | Eq of string * expr
-  | PlusEq of string * expr
-  | MinusEq of string * expr
-  | TimesEq of string * expr
+  (* operators *)
+  | UnaryOp of unary_operator * expr
+  | Op of operator * expr * expr
+  | Eq of var * expr
+  | OpEq of operator * var * expr

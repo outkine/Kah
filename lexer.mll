@@ -10,33 +10,41 @@ let int = '-'? digit+
 let letter = ['a'-'z' 'A'-'Z']
 let id = letter+
 let bool = "True" | "False"
+let newline = '\r' | '\n' | "\r\n"
 
 rule read =
   parse
   | white { read lexbuf }
-  | "\n"+ { NEWLINE }
-  | "\n"* eof { EOF }
+  | newline+ { NEWLINE }
+  | eof { EOF }
+  (* brackets *)
   | "(" { L_PAREN }
   | ")" { R_PAREN }
-  | "[" { L_BRACE }
-  | "]" { R_BRACE }
-  (* binary operators *)
+  | "[" { L_BRACKET }
+  | "]" { R_BRACKET }
+  | "{" { L_BRACE }
+  | "}" { R_BRACE }
+  (* operators *)
   | "+" { PLUS }
   | "-" { MINUS }
   | "*" { TIMES }
   | "and" { AND }
   | "or" { OR }
-  | "==" { EQUALS }
-  | "!=" { NOT_EQUALS }
+  | "==" { EQUAL }
+  | "!=" { NOT_EQUAL }
   | "not" { NOT }
   (* assignments *)
-  | "==" { EQ }
+  | "=" { EQ }
   | "+=" { PLUS_EQ }
   | "-=" { MINUS_EQ }
   | "*=" { TIMES_EQ }
-  | "==" { EQUALS }
-  | "!=" { NOT_EQUALS }
-  | "not" { NOT }
+  (* structures *)
+  | "fun" { FUN }
+  | "if" { IF }
+  | "match" { MATCH }
+  | "~" { TILDE }
+  | "->" { R_ARROW }
+  | "<-" { L_ARROW }
   (* values *)
   | bool { BOOL (Lexing.lexeme lexbuf |> String.lowercase |> Bool.of_string) }
   | id { ID (Lexing.lexeme lexbuf) }
