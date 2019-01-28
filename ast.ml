@@ -23,5 +23,6 @@ and expr =
   | Op of operator * expr * expr
   | Eq of var * expr
   | OpEq of operator * var * expr
+  | MemWrite of expr * expr
 
 and var = RegVar of id | ArrayVar of id * array_info

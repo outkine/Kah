@@ -32,7 +32,7 @@ let expr :=
     | ~ = INT; <Int>
     | ~ = BOOL; <Bool>
     | L_PAREN; e = expr; R_PAREN; <>
-    | es = array+; <Array>
+    | ix = array+; <Array>
 
     | e1 = expr; op = op; e2 = expr; {Op(op, e1, e2)}
     | op = unary_op; e = expr; <UnaryOp>
@@ -44,6 +44,8 @@ let expr :=
     | TILDE; name = ID; <FunCall>
     | MATCH; e = expr; b = match_body; <Match>
     | IF; e = expr; b = body; <If>
+
+    | loc = expr; L_ARROW; data = expr; <MemWrite>
 
 let var :=
     | name = ID; <RegVar>
